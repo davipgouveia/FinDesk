@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Off-White/Light Gray */
+    --background: 210 20% 98%;
+    /* Dark Slate */
+    --foreground: 215 28% 17%;
+ 
+    /* White */
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+ 
+    /* Navy Blue */
+    --primary: 224 76% 33%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 224 76% 33%;
+ 
+    /* Gray */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+ 
+    /* Navy Blue Accent */
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 224 76% 33%;
+ 
+    /* Red/Rose */
+    --destructive: 347 77% 50%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    /* Border: light gray */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 76% 33%;
+ 
+    /* Radius: 12px for friendly yet professional feel */
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    /* Background mais escuro (quase preto azulado) */
+    --background: 220 30% 6%;
+    /* Letras muito mais brancas para super legibilidade */
+    --foreground: 210 20% 98%;
+ 
+    /* Card um pouco mais claro para destacar do background */
+    --card: 215 28% 13%;
+    --card-foreground: 210 20% 98%;
+ 
+    --popover: 215 28% 13%;
+    --popover-foreground: 210 20% 98%;
+ 
+    /* Lighter Navy/Blue for visibility */
+    --primary: 217 91% 60%;
+    --primary-foreground: 215 28% 11%;
+ 
+    --secondary: 215 28% 18%;
+    --secondary-foreground: 210 20% 98%;
+ 
+    /* Textos secundários mais claros do que eram antes */
+    --muted: 215 28% 18%;
+    --muted-foreground: 215 15% 75%;
+ 
+    --accent: 215 28% 18%;
+    --accent-foreground: 210 20% 98%;
+ 
+    /* Rose/Red lighter */
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    /* Border dark */
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-background/80 backdrop-blur-md border border-border;
+  }
+}
+ 
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    @apply font-sans;
+  }
+}
