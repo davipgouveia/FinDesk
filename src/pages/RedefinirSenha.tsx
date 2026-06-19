@@ -14,7 +14,7 @@ export default function RedefinirSenha() {
 
   useEffect(() => {
     // Supabase listens to the hash in the URL when redirecting from email
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event, _session) => {
       if (event === 'PASSWORD_RECOVERY') {
         toast.info('Autenticado com segurança. Por favor, digite sua nova senha.');
       }
