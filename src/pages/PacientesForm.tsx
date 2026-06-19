@@ -5,7 +5,7 @@ import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent } from '../components/ui/Card';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 
 type FormValues = {
   nome: string;

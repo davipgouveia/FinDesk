@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { get, set, del } from 'idb-keyval';
+import { Toaster } from './components/ui/toast/toaster';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -24,15 +27,27 @@ import Medicos from './pages/Medicos';
 import MedicosForm from './pages/MedicosForm';
 import Configuracoes from './pages/Configuracoes';
 import NotFound from './pages/NotFound';
+import Calendario from './pages/Calendario';
 import { ThemeToggleFloat } from './components/ui/ThemeToggleFloat';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      staleTime: 1000 * 5, // 5 seconds
+    },
+  },
+});
+
+const persister = createSyncStoragePersister({
+  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+});
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="findesk-theme">
       <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
         <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -45,7 +60,9 @@ function App() {
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="pendencias" element={<Pendencias />} />
+              <Route path="calendario" element={<Calendario />} />
               <Route path="lembretes/novo" element={<LembreteForm />} />
+              <Route path="lembretes/:id/editar" element={<LembreteForm />} />
               <Route path="pendencias/:id" element={<LembreteDetail />} />
               <Route path="pacientes" element={<Pacientes />} />
               <Route path="pacientes/novo" element={<PacientesForm />} />
@@ -58,11 +75,11 @@ function App() {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-right" />
           <ThemeToggleFloat />
         </BrowserRouter>
         </AuthProvider>
-      </QueryClientProvider>
+        </PersistQueryClientProvider>
       </ErrorBoundary>
     </ThemeProvider>
   );

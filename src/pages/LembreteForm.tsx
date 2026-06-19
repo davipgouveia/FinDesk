@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,7 +8,7 @@ import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent } from '../components/ui/Card';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 import { PageWrapper } from '../components/layout/PageWrapper';
 
 const lembreteSchema = z.object({
@@ -28,7 +29,15 @@ type LembreteFormValues = z.infer<typeof lembreteSchema>;
 
 export default function LembreteForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = !!id;
   const queryClient = useQueryClient();
+
+  const { data: lembreteExistente, isLoading: loadLembrete } = useQuery({
+    queryKey: ['lembrete', id],
+    queryFn: () => api.getLembreteById(id!),
+    enabled: isEditing,
+  });
 
   const { data: pacientes, isLoading: loadPacientes } = useQuery({
     queryKey: ['pacientes'],
@@ -40,7 +49,7 @@ export default function LembreteForm() {
     queryFn: api.getMedicos,
   });
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LembreteFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<LembreteFormValues>({
     resolver: zodResolver(lembreteSchema),
     defaultValues: {
       status: 'pendente',
@@ -50,6 +59,24 @@ export default function LembreteForm() {
       data_vencimento: new Date().toISOString().split('T')[0],
     }
   });
+
+  useEffect(() => {
+    if (lembreteExistente) {
+      reset({
+        titulo: lembreteExistente.titulo,
+        descricao: lembreteExistente.descricao || '',
+        tipo: lembreteExistente.tipo as any,
+        prioridade: lembreteExistente.prioridade as any,
+        status: lembreteExistente.status as any,
+        paciente_id: lembreteExistente.paciente_id,
+        medico_id: lembreteExistente.medico_id || '',
+        data_vencimento: lembreteExistente.data_vencimento,
+        hora_vencimento: lembreteExistente.hora_vencimento || '',
+        observacoes: lembreteExistente.observacoes || '',
+        recorrente: lembreteExistente.recorrente || false,
+      });
+    }
+  }, [lembreteExistente, reset]);
 
   const criarMutation = useMutation({
     mutationFn: api.criarLembrete,
@@ -65,20 +92,46 @@ export default function LembreteForm() {
     }
   });
 
+  const atualizarMutation = useMutation({
+    mutationFn: (data: any) => api.atualizarLembrete(id!, data),
+    onSuccess: () => {
+      toast.success('Lembrete atualizado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['lembretes'] });
+      queryClient.invalidateQueries({ queryKey: ['lembretes_dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['resumo'] });
+      navigate('/pendencias');
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar o lembrete.');
+    }
+  });
+
   const onSubmit = (data: any) => {
-    // medico_id vazio passa como null pro banco para não ferir foreign key se for empty string
     const payload = {
       ...data,
-      medico_id: data.medico_id === '' ? undefined : data.medico_id,
+      medico_id: data.medico_id === '' ? null : data.medico_id,
+      hora_vencimento: data.hora_vencimento === '' ? null : data.hora_vencimento,
     };
-    criarMutation.mutate(payload);
+    if (isEditing) {
+      atualizarMutation.mutate(payload);
+    } else {
+      criarMutation.mutate(payload);
+    }
   };
+
+  if (isEditing && loadLembrete) {
+    return (
+      <PageWrapper>
+        <div className="p-8 text-center text-muted-foreground">Carregando dados...</div>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Nova Tarefa / Lembrete</h2>
+        <h2 className="text-xl font-bold">{isEditing ? 'Editar Tarefa' : 'Nova Tarefa / Lembrete'}</h2>
         <Button variant="outline" onClick={() => navigate(-1)}>Voltar</Button>
       </div>
 
@@ -163,8 +216,8 @@ export default function LembreteForm() {
 
             <div className="pt-4 flex justify-end gap-2 border-t">
               <Button type="button" variant="outline" onClick={() => navigate(-1)}>Cancelar</Button>
-              <Button type="submit" disabled={criarMutation.isPending || loadPacientes || loadMedicos}>
-                {criarMutation.isPending ? 'Salvando...' : 'Salvar Tarefa'}
+              <Button type="submit" disabled={criarMutation.isPending || atualizarMutation.isPending || loadPacientes || loadMedicos}>
+                {criarMutation.isPending || atualizarMutation.isPending ? 'Salvando...' : (isEditing ? 'Salvar Alterações' : 'Salvar Tarefa')}
               </Button>
             </div>
           </form>

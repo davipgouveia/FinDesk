@@ -11,7 +11,7 @@ import { PageWrapper } from '../components/layout/PageWrapper';
 import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 
 export default function Medicos() {
   const queryClient = useQueryClient();

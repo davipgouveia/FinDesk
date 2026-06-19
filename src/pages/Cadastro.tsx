@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 
 export default function Cadastro() {
   const [email, setEmail] = useState('');
@@ -98,7 +98,7 @@ export default function Cadastro() {
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 to-emerald-800" />
         <div className="absolute inset-0 flex flex-col justify-center px-16 text-white z-10">
           <div className="mb-8">
-            <img src="/logo-h-branca.png" alt="Findesk Logo" className="h-16 w-auto rounded-xl shadow-2xl" />
+            <img src="/logo-h-branca.png" alt="FinDesk Logo" className="h-16 w-auto rounded-xl shadow-2xl" />
           </div>
           <h1 className="text-4xl font-bold mb-4 leading-tight">A plataforma moderna<br />para a saúde.</h1>
           <p className="text-lg text-emerald-100 max-w-md">Gerencie pacientes, lembretes e relatórios num só lugar, com o máximo de eficiência.</p>

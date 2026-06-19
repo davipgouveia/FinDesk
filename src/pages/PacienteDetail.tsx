@@ -12,7 +12,7 @@ import { PageWrapper } from '../components/layout/PageWrapper';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 import { Edit2, Trash2 } from 'lucide-react';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { useState } from 'react';

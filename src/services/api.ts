@@ -69,7 +69,7 @@ export const api = {
   },
 
   // --- Lembretes ---
-  async getLembretes(filters?: { status?: string, prioridade?: string, busca?: string }) {
+  async getLembretes(filters?: { status?: string, prioridade?: string, busca?: string, filtroCustom?: string }) {
     let query = supabase.from('lembretes').select(`
       *,
       pacientes ( nome ),
@@ -77,11 +77,23 @@ export const api = {
     `).order('data_vencimento', { ascending: true })
       .order('prioridade', { ascending: false });
 
-    if (filters?.status) {
-      query = query.eq('status', filters.status);
+    const hoje = new Date().toISOString().split('T')[0];
+
+    if (filters?.filtroCustom === 'concluidos') {
+      query = query.eq('status', 'concluído');
     } else {
-      // Padrão não mostra concluídos/cancelados
-      query = query.in('status', ['pendente', 'em andamento', 'aguardando retorno']);
+      if (filters?.status && filters?.status !== 'todos') {
+        query = query.eq('status', filters.status);
+      } else if (filters?.status !== 'todos') {
+        // Padrão não mostra concluídos/cancelados, a menos que seja explicitamente 'todos'
+        query = query.in('status', ['pendente', 'em andamento', 'aguardando retorno']);
+      }
+    }
+
+    if (filters?.filtroCustom === 'hoje') {
+      query = query.eq('data_vencimento', hoje);
+    } else if (filters?.filtroCustom === 'atrasados') {
+      query = query.lt('data_vencimento', hoje).in('status', ['pendente', 'em andamento', 'aguardando retorno']);
     }
 
     if (filters?.prioridade) {
@@ -142,6 +154,29 @@ export const api = {
       lembrete_id: data.id,
       tipo_acao: 'criacao',
       descricao: 'Lembrete criado',
+      usuario_id: userData.user.id
+    }]);
+
+    return data;
+  },
+
+  async atualizarLembrete(id: string, lembrete: Partial<Lembrete>) {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) throw new Error('Usuário não autenticado');
+
+    const { data, error } = await supabase
+      .from('lembretes')
+      .update(lembrete)
+      .eq('id', id)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    
+    await supabase.from('historico_acoes').insert([{
+      lembrete_id: data.id,
+      tipo_acao: 'edicao',
+      descricao: 'Lembrete editado manualmente',
       usuario_id: userData.user.id
     }]);
 

@@ -8,7 +8,7 @@ import { FileText, TrendingUp, CheckCircle, Clock, Trash2 } from 'lucide-react';
 import { exportToPDF } from '../lib/exportToPDF';
 import { format, parseISO } from 'date-fns';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 
 export default function Relatorios() {
   const queryClient = useQueryClient();

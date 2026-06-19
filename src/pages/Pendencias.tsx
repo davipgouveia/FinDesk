@@ -5,43 +5,92 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { CheckCircle2, Search, Plus, Trash2 } from 'lucide-react';
+import { CheckCircle2, Search, Plus, Trash2, Copy, Pencil } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+import { sileo as toast } from '../components/ui/toast/toaster';
+import { Link, useSearchParams } from 'react-router-dom';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
+import { FilterChips } from '../components/ui/FilterChips';
 
 export default function Pendencias() {
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const filtroCustom = searchParams.get('filtro') || undefined;
+
   const [busca, setBusca] = useState('');
   const [statusFiltro, setStatusFiltro] = useState('');
   const [prioridadeFiltro, setPrioridadeFiltro] = useState('');
-  const [lembreteAConfirmar, setLembreteAConfirmar] = useState<string | null>(null);
   const [lembreteAExcluir, setLembreteAExcluir] = useState<any>(null);
 
   const { data: lembretes, isLoading } = useQuery({
-    queryKey: ['lembretes', statusFiltro, prioridadeFiltro, busca],
+    queryKey: ['lembretes', statusFiltro, prioridadeFiltro, busca, filtroCustom],
     queryFn: () => api.getLembretes({ 
       status: statusFiltro || undefined, 
       prioridade: prioridadeFiltro || undefined, 
-      busca: busca || undefined 
+      busca: busca || undefined,
+      filtroCustom: filtroCustom
     }),
   });
 
   const concluirMutation = useMutation({
     mutationFn: api.concluirLembrete,
-    onSuccess: () => {
-      toast.success('Tarefa concluída!');
-      setLembreteAConfirmar(null);
+    onMutate: async (id) => {
+      // Cancelar queries ativas para evitar sobrescrita do optimistic
+      await queryClient.cancelQueries({ queryKey: ['lembretes'] });
+      
+      const previousLembretes = queryClient.getQueryData(['lembretes', statusFiltro, prioridadeFiltro, busca, filtroCustom]);
+      
+      // Update optimistic
+      queryClient.setQueryData(
+        ['lembretes', statusFiltro, prioridadeFiltro, busca, filtroCustom],
+        (old: any) => {
+          if (!old) return old;
+          // Se estamos numa visão que oculta concluídos, removemos o item localmente
+          if (filtroCustom !== 'concluidos' && statusFiltro !== 'concluído') {
+            return old.filter((l: any) => l.id !== id);
+          }
+          // Caso contrário só altera o status
+          return old.map((l: any) => l.id === id ? { ...l, status: 'concluído' } : l);
+        }
+      );
+
+      return { previousLembretes };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousLembretes) {
+        queryClient.setQueryData(['lembretes', statusFiltro, prioridadeFiltro, busca, filtroCustom], context.previousLembretes);
+      }
+      toast.error('Erro ao concluir tarefa. Tentando novamente...');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['lembretes'] });
       queryClient.invalidateQueries({ queryKey: ['resumo'] });
       queryClient.invalidateQueries({ queryKey: ['lembretes_dashboard'] });
     },
+    onSuccess: () => {
+      toast.success('Tarefa concluída!', { duration: 2000 });
+    }
+  });
+
+  const duplicarMutation = useMutation({
+    mutationFn: async (lembreteOriginal: any) => {
+      const { id, created_at, updated_at, concluido_em, cancelado_em, pacientes, medicos, ...dadosParaDuplicar } = lembreteOriginal;
+      const novo = {
+        ...dadosParaDuplicar,
+        titulo: `${dadosParaDuplicar.titulo} (Cópia)`,
+        status: 'pendente' as const,
+      };
+      return api.criarLembrete(novo);
+    },
+    onSuccess: () => {
+      toast.success('Lembrete duplicado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['lembretes'] });
+      queryClient.invalidateQueries({ queryKey: ['resumo'] });
+    },
     onError: () => {
-      toast.error('Erro ao concluir tarefa.');
-      setLembreteAConfirmar(null);
+      toast.error('Erro ao duplicar lembrete.');
     }
   });
 
@@ -63,6 +112,9 @@ export default function Pendencias() {
   return (
     <PageWrapper>
       <div className="space-y-6">
+      
+      <FilterChips />
+
       {/* Barra de Ações e Filtros */}
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <div className="flex flex-col sm:flex-row flex-1 gap-2">
@@ -134,19 +186,46 @@ export default function Pendencias() {
                       </div>
                     </Link>
                   </div>
-                  <div className="ml-0 md:ml-4 shrink-0 w-full md:w-auto flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1 md:flex-none border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all"
-                      onClick={() => setLembreteAConfirmar(l.id)}
-                      disabled={concluirMutation.isPending}
-                    >
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                      Check
-                    </Button>
+                  <div className="ml-0 md:ml-4 shrink-0 w-full md:w-auto flex flex-wrap gap-2 justify-end">
+                    {l.status !== 'concluído' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="flex-1 md:flex-none border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all"
+                        onClick={() => concluirMutation.mutate(l.id)}
+                        disabled={concluirMutation.isPending}
+                      >
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        Check
+                      </Button>
+                    )}
+                    
+                    <Link to={`/lembretes/${l.id}/editar`} className="flex-1 md:flex-none">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        title="Editar"
+                        className="text-muted-foreground hover:text-foreground hover:bg-secondary w-full"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    
                     <Button 
                       variant="ghost" 
-                      size="icon"
+                      size="sm"
+                      title="Duplicar"
+                      className="text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      onClick={() => duplicarMutation.mutate(l)}
+                      disabled={duplicarMutation.isPending}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      title="Excluir"
                       className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                       onClick={() => setLembreteAExcluir(l)}
                     >
@@ -159,17 +238,6 @@ export default function Pendencias() {
           )}
         </CardContent>
       </Card>
-
-      <ConfirmModal
-        isOpen={!!lembreteAConfirmar}
-        onClose={() => setLembreteAConfirmar(null)}
-        onConfirm={() => lembreteAConfirmar && concluirMutation.mutate(lembreteAConfirmar)}
-        title="Concluir Tarefa?"
-        description="Esta tarefa será movida para o histórico. Tem certeza?"
-        confirmText="Concluir"
-        type="success"
-        isLoading={concluirMutation.isPending}
-      />
 
       <ConfirmModal
         isOpen={!!lembreteAExcluir}

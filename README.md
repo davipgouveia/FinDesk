@@ -1,17 +1,20 @@
-# Lembretes Operacionais - MVP
+# FinDesk - Lembretes Operacionais para Clínicas
 
-Um sistema web completo para a gestão de lembretes operacionais focados na secretária financeira de clínicas.
+Um sistema web completo, focado e de altíssima produtividade para a gestão de lembretes operacionais voltados para a secretária financeira de clínicas.
 
 ## Funcionalidades
-- **Dashboard**: Resumo em tempo real de pendências e visão rápida das tarefas para hoje e atrasadas.
-- **Pendências**: Filtros, busca, listagem e a funcionalidade principal de "check" central, que registra a conclusão e altera o status.
+- **Dashboard Operacional "Meu Dia"**: Resumo em tempo real de pendências focadas nas próximas horas, atrasos e tarefas finalizadas hoje.
+- **Pendências Rápidas**: Filtros, busca de 1-clique (chips), listagem e funcionalidade principal de "check" com feedback instantâneo (optimistic updates).
+- **Ações Rápidas**: Barra de produtividade para criação e pesquisa global de lembretes.
+- **Calendário Mensal**: Visão rápida de volume de tarefas por dia.
+- **Resiliência de Rede**: Cache persistido local (offline reading) usando React Query e stale-while-revalidate.
 - **Pacientes e Médicos**: Gerenciamento integrado e visão de tarefas pendentes para cada paciente.
-- **Histórico Automático**: Ao concluir ou alterar um lembrete, o sistema gera log automático no histórico geral.
+- **Histórico Automático**: Geração de log automático no histórico geral a cada ação.
 
 ## Stack
-- Vite + React + TypeScript
+- Vite + React 19 + TypeScript
 - Tailwind CSS
-- React Query + React Hook Form + Zod
+- React Query (Persistido) + React Hook Form + Zod
 - Supabase (Auth + Database + RLS + Triggers)
 
 ## Como executar localmente

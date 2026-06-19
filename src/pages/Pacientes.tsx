@@ -8,7 +8,7 @@ import { Search, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 
 export default function Pacientes() {
   const queryClient = useQueryClient();

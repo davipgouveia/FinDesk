@@ -9,7 +9,7 @@ import { Input } from '../components/ui/Input';
 import { CheckCircle2, XCircle, Calendar, ArrowLeft, History } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 

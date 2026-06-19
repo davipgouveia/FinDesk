@@ -7,15 +7,13 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { format, parseISO, isPast, isToday, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 import { PageWrapper } from '../components/layout/PageWrapper';
-import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const [lembreteAConfirmar, setLembreteAConfirmar] = useState<string | null>(null);
   const [abaAtiva, setAbaAtiva] = useState<'hoje' | 'proximos' | 'aguardando'>('hoje');
 
   const { data: resumo, isLoading: loadResumo } = useQuery({
@@ -30,15 +28,31 @@ export default function Dashboard() {
 
   const concluirMutation = useMutation({
     mutationFn: api.concluirLembrete,
-    onSuccess: () => {
-      toast.success('Tarefa concluída! Bom trabalho!');
-      setLembreteAConfirmar(null);
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['lembretes_dashboard'] });
+      
+      const previousLembretes = queryClient.getQueryData(['lembretes_dashboard']);
+      
+      queryClient.setQueryData(['lembretes_dashboard'], (old: any) => {
+        if (!old) return old;
+        return old.map((l: any) => l.id === id ? { ...l, status: 'concluído', concluido_em: new Date().toISOString() } : l);
+      });
+
+      return { previousLembretes };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousLembretes) {
+        queryClient.setQueryData(['lembretes_dashboard'], context.previousLembretes);
+      }
+      toast.error('Erro ao concluir tarefa. Tentando novamente...');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['resumo'] });
       queryClient.invalidateQueries({ queryKey: ['lembretes_dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['lembretes'] });
     },
-    onError: () => {
-      toast.error('Erro ao concluir tarefa.');
-      setLembreteAConfirmar(null);
+    onSuccess: () => {
+      toast.success('Tarefa concluída! Bom trabalho!');
     }
   });
 
@@ -201,7 +215,7 @@ export default function Dashboard() {
                         <Button 
                           variant="outline" 
                           className="w-full sm:w-auto border-emerald-200 text-emerald-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-600 dark:hover:text-white transition-all shadow-sm"
-                          onClick={() => setLembreteAConfirmar(l.id)}
+                          onClick={() => concluirMutation.mutate(l.id)}
                           disabled={concluirMutation.isPending}
                         >
                           <CheckCircle2 className="mr-2 h-4 w-4" />
@@ -294,16 +308,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <ConfirmModal
-          isOpen={!!lembreteAConfirmar}
-          onClose={() => setLembreteAConfirmar(null)}
-          onConfirm={() => lembreteAConfirmar && concluirMutation.mutate(lembreteAConfirmar)}
-          title="Concluir Lembrete?"
-          description="Você tem certeza que deseja marcar esta tarefa como concluída? Bom trabalho!"
-          confirmText="Concluir Tarefa"
-          type="success"
-          isLoading={concluirMutation.isPending}
-        />
+        {/* ConfirmModal removido para check instantâneo */}
       </div>
     </PageWrapper>
   );

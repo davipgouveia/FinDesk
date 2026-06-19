@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { toast } from 'sonner';
+import { sileo as toast } from '../components/ui/toast/toaster';
 import { Lock } from 'lucide-react';
 
 export default function RedefinirSenha() {

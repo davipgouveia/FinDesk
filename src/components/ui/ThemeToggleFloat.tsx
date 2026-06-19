@@ -1,53 +1,47 @@
-import { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export function ThemeToggleFloat() {
   const { theme, setTheme } = useTheme();
-  const controls = useAnimation();
-  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-
-  // Posição inicial: Canto inferior direito (padding de 24px)
-  const buttonSize = 56; // w-14 h-14 = 56px
-  const padding = 24;
-
-  useEffect(() => {
-    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const dragConstraints = {
-    top: 0,
-    bottom: windowSize.height - buttonSize - padding * 2,
-    left: -(windowSize.width - buttonSize - padding * 2),
-    right: 0
-  };
+  const [expanded, setExpanded] = useState(false);
 
   const toggleTheme = () => {
+    setExpanded(true);
     setTheme(theme === 'dark' ? 'light' : 'dark');
+    
+    // Retorna a ficar escondido depois da animação
+    setTimeout(() => {
+      setExpanded(false);
+    }, 1500);
   };
 
   return (
     <motion.button
-      drag
-      dragConstraints={dragConstraints}
-      dragElastic={0.8}
-      dragMomentum={true}
-      animate={controls}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      initial={{ x: "60%" }}
+      animate={{ x: expanded ? 0 : "60%" }}
+      whileHover={{ x: "20%" }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       onClick={toggleTheme}
-      className="fixed bottom-6 right-6 z-[100] flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-primary-foreground/20"
-      title="Alternar Tema (Arraste para mover)"
-      style={{ touchAction: 'none' }} // Impede scroll indesejado no mobile
+      className="fixed right-0 bottom-24 z-[100] flex h-14 w-14 items-center justify-start pl-2 rounded-l-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.1)] border border-r-0 border-white/40 dark:border-white/10"
+      title="Alternar Tema"
     >
-      {theme === 'dark' ? (
-        <Sun className="h-6 w-6" />
-      ) : (
-        <Moon className="h-6 w-6" />
-      )}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={theme}
+          initial={{ rotate: -180, opacity: 0, scale: 0.5 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 180, opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.4 }}
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-7 w-7 text-yellow-500" />
+          ) : (
+            <Moon className="h-7 w-7 text-indigo-500" />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </motion.button>
   );
 }
