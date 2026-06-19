@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Button } from './Button';
@@ -43,7 +43,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' 
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className={`w-full ${maxWidth} bg-card text-card-foreground rounded-2xl shadow-xl border pointer-events-auto flex flex-col max-h-[90vh]`}
             >
-              {(title || onClose) && (
+              {true && (
                 <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
                   {title && <h2 className="text-lg font-semibold">{title}</h2>}
                   <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0 rounded-full ml-auto">

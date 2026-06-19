@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
