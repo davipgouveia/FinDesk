@@ -93,19 +93,14 @@ export default function Cadastro() {
           </div>
         </div>
       </div>
-      
+
       <div className="relative hidden w-0 flex-1 lg:block">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 to-emerald-800" />
-        <img
-          className="absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-multiply"
-          src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-          alt="Clinic Background"
-        />
         <div className="absolute inset-0 flex flex-col justify-center px-16 text-white z-10">
           <div className="mb-8">
-            <img src="/Logo.jpeg" alt="Findesk Logo" className="h-16 w-auto rounded-xl shadow-2xl invert hue-rotate-180" />
+            <img src="/logo-h-branca.png" alt="Findesk Logo" className="h-16 w-auto rounded-xl shadow-2xl" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 leading-tight">A plataforma moderna<br/>para a saúde.</h1>
+          <h1 className="text-4xl font-bold mb-4 leading-tight">A plataforma moderna<br />para a saúde.</h1>
           <p className="text-lg text-emerald-100 max-w-md">Gerencie pacientes, lembretes e relatórios num só lugar, com o máximo de eficiência.</p>
         </div>
       </div>
