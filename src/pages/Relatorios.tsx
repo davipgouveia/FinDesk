@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -7,11 +7,8 @@ import { PageWrapper } from '../components/layout/PageWrapper';
 import { FileText, TrendingUp, CheckCircle, Clock, Trash2 } from 'lucide-react';
 import { exportToPDF } from '../lib/exportToPDF';
 import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 export default function Relatorios() {
   const queryClient = useQueryClient();

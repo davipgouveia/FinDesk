@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -8,7 +8,6 @@ import { Search, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export default function Pacientes() {
@@ -30,7 +29,7 @@ export default function Pacientes() {
       queryClient.invalidateQueries({ queryKey: ['pacientes'] });
       setPacienteParaExcluir(null);
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Erro ao excluir paciente. Ele pode ter lembretes vinculados.');
     }
   });
@@ -80,9 +79,9 @@ export default function Pacientes() {
                     <Badge variant={p.ativo ? 'success' : 'secondary'}>
                       {p.ativo ? 'Ativo' : 'Inativo'}
                     </Badge>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                       onClick={(e) => {
                         e.preventDefault();

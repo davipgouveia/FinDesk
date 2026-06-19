@@ -46,7 +46,7 @@ export default function Medicos() {
       queryClient.invalidateQueries({ queryKey: ['medicos'] });
       setMedicoParaExcluir(null);
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Erro ao excluir médico. Ele pode ter lembretes vinculados.');
     }
   });

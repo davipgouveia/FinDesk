@@ -48,7 +48,7 @@ export default function PacienteDetail() {
       queryClient.invalidateQueries({ queryKey: ['pacientes'] });
       navigate('/pacientes');
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Erro ao excluir paciente. Pode haver lembretes vinculados.');
     }
   });
