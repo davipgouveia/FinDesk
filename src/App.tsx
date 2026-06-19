@@ -9,6 +9,8 @@ import { AppLayout } from './components/layout/AppLayout';
 
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
+import EsqueciSenha from './pages/EsqueciSenha';
+import RedefinirSenha from './pages/RedefinirSenha';
 import Dashboard from './pages/Dashboard';
 import Pendencias from './pages/Pendencias';
 import LembreteForm from './pages/LembreteForm';
@@ -33,6 +35,8 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/redefinir-senha" element={<RedefinirSenha />} />
 
             <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<Navigate to="/dashboard" replace />} />
