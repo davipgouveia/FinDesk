@@ -83,7 +83,7 @@ export default function EsqueciSenha() {
           <div className="mb-8">
             <img src="/logo-h-branca.png" alt="Findesk Logo" className="h-16 w-auto rounded-xl shadow-2xl" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 leading-tight">Alívio mental para a<br />gestão da sua clínica.</h1>
+          <h1 className="text-4xl font-bold mb-4 leading-tight">A plataforma moderna<br />para a saúde.</h1>
           <p className="text-lg text-emerald-100 max-w-md">Não se preocupe, recuperar o acesso é rápido e seguro.</p>
         </div>
       </div>

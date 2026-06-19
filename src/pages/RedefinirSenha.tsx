@@ -51,7 +51,7 @@ export default function RedefinirSenha() {
     <div className="flex min-h-screen w-full bg-slate-50 dark:bg-slate-950 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-10 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800">
         <div>
-          <img src="/Logo.jpeg" alt="Findesk Logo" className="mx-auto h-12 w-auto dark:invert dark:hue-rotate-180" />
+          <img src="/logo-h-branca.png" alt="Findesk Logo" className="mx-auto h-12 w-auto" />
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             Redefina sua Senha
           </h2>
@@ -59,7 +59,7 @@ export default function RedefinirSenha() {
             Digite a nova senha que deseja usar para acessar o FinDesk.
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleUpdatePassword}>
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
