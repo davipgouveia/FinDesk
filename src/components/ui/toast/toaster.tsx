@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import type { SileoOptions, SileoPosition, SileoItem, SileoState } from "./types";
 import { Toast } from "./Toast";
