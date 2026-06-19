@@ -6,10 +6,14 @@ import { cn } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { Menu, X } from 'lucide-react';
 
+import { useLembretesNotifications } from '../../hooks/useLembretesNotifications';
+
 export const AppLayout = () => {
   const { signOut, user } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useLembretesNotifications();
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },

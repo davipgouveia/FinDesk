@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
@@ -22,6 +23,7 @@ import Relatorios from './pages/Relatorios';
 import Medicos from './pages/Medicos';
 import MedicosForm from './pages/MedicosForm';
 import Configuracoes from './pages/Configuracoes';
+import NotFound from './pages/NotFound';
 import { ThemeToggleFloat } from './components/ui/ThemeToggleFloat';
 
 const queryClient = new QueryClient();
@@ -29,7 +31,8 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="findesk-theme">
-      <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
         <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -53,13 +56,14 @@ function App() {
               <Route path="configuracoes" element={<Configuracoes />} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster position="top-right" richColors />
           <ThemeToggleFloat />
         </BrowserRouter>
         </AuthProvider>
       </QueryClientProvider>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }
