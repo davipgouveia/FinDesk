@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,22 +6,22 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Card, CardContent } from '../components/ui/Card';
 import { toast } from 'sonner';
 import { PageWrapper } from '../components/layout/PageWrapper';
 
 const lembreteSchema = z.object({
   titulo: z.string().min(1, 'Título é obrigatório'),
   descricao: z.string().optional(),
-  tipo: z.enum(['cobrança', 'pagamento', 'NF', 'retorno', 'agenda', 'conferência', 'pendência com médico'], { errorMap: () => ({ message: 'Tipo é obrigatório' }) }),
-  prioridade: z.enum(['baixa', 'média', 'alta'], { errorMap: () => ({ message: 'Prioridade é obrigatória' }) }),
+  tipo: z.enum(['cobrança', 'pagamento', 'NF', 'retorno', 'agenda', 'conferência', 'pendência com médico'] as const, { message: 'Tipo é obrigatório' }),
+  prioridade: z.enum(['baixa', 'média', 'alta'] as const, { message: 'Prioridade é obrigatória' }),
   status: z.enum(['pendente', 'em andamento', 'aguardando retorno']),
   paciente_id: z.string().min(1, 'Paciente é obrigatório'),
   medico_id: z.string().optional(),
   data_vencimento: z.string().min(1, 'Data é obrigatória'),
   hora_vencimento: z.string().optional(),
   observacoes: z.string().optional(),
-  recorrente: z.boolean().default(false),
+  recorrente: z.boolean().optional(),
 });
 
 type LembreteFormValues = z.infer<typeof lembreteSchema>;

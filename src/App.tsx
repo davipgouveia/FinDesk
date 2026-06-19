@@ -24,9 +24,6 @@ import { ThemeToggleFloat } from './components/ui/ThemeToggleFloat';
 
 const queryClient = new QueryClient();
 
-// Placeholder components for pages not yet implemented
-const Placeholder = ({ title }: { title: string }) => <div className="text-slate-500">Página {title} em construção...</div>;
-
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="findesk-theme">

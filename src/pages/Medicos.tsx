@@ -172,9 +172,9 @@ export default function Medicos() {
         onClose={() => setMedicoParaExcluir(null)}
         onConfirm={() => deleteMutation.mutate(medicoParaExcluir.id)}
         title="Excluir Médico"
-        message={`Tem certeza que deseja excluir o(a) Dr(a). ${medicoParaExcluir?.nome}? Esta ação não poderá ser desfeita.`}
+        description={`Tem certeza que deseja excluir o(a) Dr(a). ${medicoParaExcluir?.nome}? Esta ação não poderá ser desfeita.`}
         confirmText={deleteMutation.isPending ? 'Excluindo...' : 'Sim, excluir médico'}
-        variant="danger"
+        type="danger"
       />
     </div>
     </PageWrapper>

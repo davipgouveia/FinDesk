@@ -211,9 +211,9 @@ export default function PacienteDetail() {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => deleteMutation.mutate(paciente.id)}
         title="Excluir Paciente"
-        message={`Tem certeza que deseja excluir o paciente ${paciente.nome}? Esta ação não poderá ser desfeita.`}
+        description={`Tem certeza que deseja excluir o paciente ${paciente.nome}? Esta ação não poderá ser desfeita.`}
         confirmText={deleteMutation.isPending ? 'Excluindo...' : 'Sim, excluir paciente'}
-        variant="danger"
+        type="danger"
       />
     </div>
     </PageWrapper>

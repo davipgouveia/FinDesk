@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { CheckSquare, Clock, AlertCircle, CheckCircle2, Plus, Calendar as CalendarIcon, UserPlus } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { format, parseISO, isPast, isToday, addDays, isBefore, isAfter } from 'date-fns';
+import { format, parseISO, isPast, isToday, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { PageWrapper } from '../components/layout/PageWrapper';
@@ -301,7 +301,7 @@ export default function Dashboard() {
           title="Concluir Lembrete?"
           description="Você tem certeza que deseja marcar esta tarefa como concluída? Bom trabalho!"
           confirmText="Concluir Tarefa"
-          variant="success"
+          type="success"
           isLoading={concluirMutation.isPending}
         />
       </div>

@@ -105,9 +105,9 @@ export default function Pacientes() {
         onClose={() => setPacienteParaExcluir(null)}
         onConfirm={() => deleteMutation.mutate(pacienteParaExcluir.id)}
         title="Excluir Paciente"
-        message={`Tem certeza que deseja excluir o paciente ${pacienteParaExcluir?.nome}? Esta ação não poderá ser desfeita.`}
+        description={`Tem certeza que deseja excluir o paciente ${pacienteParaExcluir?.nome}? Esta ação não poderá ser desfeita.`}
         confirmText={deleteMutation.isPending ? 'Excluindo...' : 'Sim, excluir paciente'}
-        variant="danger"
+        type="danger"
       />
     </div>
   );

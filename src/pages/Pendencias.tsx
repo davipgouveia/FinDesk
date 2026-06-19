@@ -167,7 +167,7 @@ export default function Pendencias() {
         title="Concluir Tarefa?"
         description="Esta tarefa será movida para o histórico. Tem certeza?"
         confirmText="Concluir"
-        variant="success"
+        type="success"
         isLoading={concluirMutation.isPending}
       />
 
@@ -176,9 +176,9 @@ export default function Pendencias() {
         onClose={() => setLembreteAExcluir(null)}
         onConfirm={() => lembreteAExcluir && deleteMutation.mutate(lembreteAExcluir.id)}
         title="Excluir Tarefa"
-        message={`Tem certeza que deseja excluir "${lembreteAExcluir?.titulo}"? Esta ação não poderá ser desfeita.`}
+        description={`Tem certeza que deseja excluir "${lembreteAExcluir?.titulo}"? Esta ação não poderá ser desfeita.`}
         confirmText={deleteMutation.isPending ? 'Excluindo...' : 'Sim, excluir'}
-        variant="danger"
+        type="danger"
       />
     </div>
     </PageWrapper>
