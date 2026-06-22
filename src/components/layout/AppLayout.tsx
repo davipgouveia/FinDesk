@@ -30,6 +30,7 @@ export const AppLayout = () => {
     { name: 'Pendências', href: '/pendencias', icon: CheckSquare },
     { name: 'Calendário', href: '/calendario', icon: Calendar },
     { name: 'Pacientes', href: '/pacientes', icon: Users },
+    { name: 'Médicos', href: '/medicos', icon: Stethoscope },
     { name: 'Config', href: '/configuracoes', icon: Settings },
   ];
 

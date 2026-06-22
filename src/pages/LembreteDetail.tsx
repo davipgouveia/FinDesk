@@ -94,7 +94,7 @@ export default function LembreteDetail() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-slate-500 block">Paciente</span>
-                    <span className="font-medium text-slate-900 dark:text-slate-50">{lembrete.pacientes?.nome}</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-50">{lembrete.pacientes?.nome || 'Nenhum'}</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block">Médico</span>

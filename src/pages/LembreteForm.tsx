@@ -17,7 +17,7 @@ const lembreteSchema = z.object({
   tipo: z.enum(['cobrança', 'pagamento', 'NF', 'retorno', 'agenda', 'conferência', 'pendência com médico'] as const, { message: 'Tipo é obrigatório' }),
   prioridade: z.enum(['baixa', 'média', 'alta'] as const, { message: 'Prioridade é obrigatória' }),
   status: z.enum(['pendente', 'em andamento', 'aguardando retorno']),
-  paciente_id: z.string().min(1, 'Paciente é obrigatório'),
+  paciente_id: z.string().optional(),
   medico_id: z.string().optional(),
   data_vencimento: z.string().min(1, 'Data é obrigatória'),
   hora_vencimento: z.string().optional(),
@@ -68,7 +68,7 @@ export default function LembreteForm() {
         tipo: lembreteExistente.tipo as any,
         prioridade: lembreteExistente.prioridade as any,
         status: lembreteExistente.status as any,
-        paciente_id: lembreteExistente.paciente_id,
+        paciente_id: lembreteExistente.paciente_id || '',
         medico_id: lembreteExistente.medico_id || '',
         data_vencimento: lembreteExistente.data_vencimento,
         hora_vencimento: lembreteExistente.hora_vencimento || '',
@@ -109,6 +109,7 @@ export default function LembreteForm() {
   const onSubmit = (data: any) => {
     const payload = {
       ...data,
+      paciente_id: data.paciente_id === '' ? null : data.paciente_id,
       medico_id: data.medico_id === '' ? null : data.medico_id,
       hora_vencimento: data.hora_vencimento === '' ? null : data.hora_vencimento,
     };
@@ -146,12 +147,12 @@ export default function LembreteForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Paciente *</label>
+                <label className="text-sm font-medium">Paciente (Opcional)</label>
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   {...register('paciente_id')}
                 >
-                  <option value="">Selecione...</option>
+                  <option value="">Nenhum</option>
                   {pacientes?.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
                 </select>
                 {errors.paciente_id && <p className="text-xs text-red-500">{errors.paciente_id.message}</p>}

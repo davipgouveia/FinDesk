@@ -34,7 +34,7 @@ export interface Lembrete {
   tipo: TipoLembrete;
   prioridade: PrioridadeLembrete;
   status: StatusLembrete;
-  paciente_id: string;
+  paciente_id?: string;
   medico_id?: string;
   data_vencimento: string;
   hora_vencimento?: string;

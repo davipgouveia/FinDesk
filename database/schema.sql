@@ -36,7 +36,7 @@ create table lembretes (
   tipo text not null check (tipo in ('cobrança', 'pagamento', 'NF', 'retorno', 'agenda', 'conferência', 'pendência com médico')),
   prioridade text not null check (prioridade in ('baixa', 'média', 'alta')),
   status text not null check (status in ('pendente', 'em andamento', 'aguardando retorno', 'concluído', 'cancelado')),
-  paciente_id uuid not null references pacientes(id) on delete cascade,
+  paciente_id uuid references pacientes(id) on delete cascade,
   medico_id uuid references medicos(id) on delete set null,
   data_vencimento date not null,
   hora_vencimento time without time zone,

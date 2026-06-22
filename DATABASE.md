@@ -32,7 +32,7 @@
 - `tipo`: Text, Not Null (cobrança, pagamento, NF, retorno, agenda, conferência, pendência com médico)
 - `prioridade`: Text, Not Null (baixa, média, alta)
 - `status`: Text, Not Null (pendente, em andamento, aguardando retorno, concluído, cancelado)
-- `paciente_id`: UUID, Foreign Key (pacientes), Not Null
+- `paciente_id`: UUID, Foreign Key (pacientes), Nullable
 - `medico_id`: UUID, Foreign Key (medicos), Nullable
 - `data_vencimento`: Date, Not Null
 - `hora_vencimento`: Time, Nullable
