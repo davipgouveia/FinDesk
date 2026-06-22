@@ -204,7 +204,7 @@ export default function Dashboard() {
                               {l.pacientes?.nome && (
                                 <span className="flex items-center gap-1"><UserPlus className="h-3 w-3"/> {l.pacientes.nome}</span>
                               )}
-                              <span className="flex items-center gap-1"><CalendarIcon className="h-3 w-3"/> {format(parseISO(l.data_vencimento), "dd/MM/yyyy", { locale: ptBR })}</span>
+                              <span className="flex items-center gap-1"><CalendarIcon className="h-3 w-3"/> {format(parseISO(l.data_vencimento), "dd/MM/yyyy", { locale: ptBR })}{l.hora_vencimento && ` às ${l.hora_vencimento.slice(0, 5)}`}</span>
                             </div>
                             <div className="flex gap-2 mt-2">
                               {l.prioridade === 'alta' && <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">Alta Prioridade</Badge>}

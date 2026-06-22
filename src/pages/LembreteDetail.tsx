@@ -104,6 +104,7 @@ export default function LembreteDetail() {
                     <span className="text-slate-500 block">Vencimento</span>
                     <span className="font-medium text-slate-900 dark:text-slate-50">
                       {format(parseISO(lembrete.data_vencimento), "dd/MM/yyyy", { locale: ptBR })}
+                      {lembrete.hora_vencimento && ` às ${lembrete.hora_vencimento.slice(0, 5)}`}
                     </span>
                   </div>
                   <div>

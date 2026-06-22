@@ -71,7 +71,7 @@ export default function LembreteForm() {
         paciente_id: lembreteExistente.paciente_id || '',
         medico_id: lembreteExistente.medico_id || '',
         data_vencimento: lembreteExistente.data_vencimento,
-        hora_vencimento: lembreteExistente.hora_vencimento || '',
+        hora_vencimento: lembreteExistente.hora_vencimento?.slice(0, 5) || '',
         observacoes: lembreteExistente.observacoes || '',
         recorrente: lembreteExistente.recorrente || false,
       });
@@ -170,7 +170,7 @@ export default function LembreteForm() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tipo *</label>
                 <select 
@@ -203,6 +203,11 @@ export default function LembreteForm() {
                 <label className="text-sm font-medium">Data Vencimento *</label>
                 <Input type="date" {...register('data_vencimento')} />
                 {errors.data_vencimento && <p className="text-xs text-red-500">{errors.data_vencimento.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Horário (Opcional)</label>
+                <Input type="time" {...register('hora_vencimento')} />
               </div>
             </div>
 
