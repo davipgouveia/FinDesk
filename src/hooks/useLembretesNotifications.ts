@@ -6,7 +6,7 @@ export function useLembretesNotifications() {
   const checkInterval = useRef<number | null>(null);
 
   useEffect(() => {
-    if ('Notification' in window) {
+    if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
@@ -15,12 +15,19 @@ export function useLembretesNotifications() {
 
       try {
         const lembretes = await api.getLembretesDashboard();
-        const hoje = new Date().toISOString().split('T')[0];
         const agora = new Date();
-        const horaAtual = agora.getHours().toString().padStart(2, '0') + ':' + agora.getMinutes().toString().padStart(2, '0');
+        
+        // Evita o bug do toISOString() gerando a data baseada no fuso horário local
+        const ano = agora.getFullYear();
+        const mes = String(agora.getMonth() + 1).padStart(2, '0');
+        const dia = String(agora.getDate()).padStart(2, '0');
+        const hoje = `${ano}-${mes}-${dia}`; 
+        
+        // Converte a hora atual para minutos totais para facilitar a matemática
+        const horaAtualEmMinutos = agora.getHours() * 60 + agora.getMinutes();
 
         const notifiedIds = JSON.parse(localStorage.getItem('notified_lembretes') || '[]');
-        let newNotifiedIds = [...notifiedIds];
+        const newNotifiedIds = [...notifiedIds];
 
         lembretes.forEach((lembrete: Lembrete) => {
           if (lembrete.status === 'pendente') {
@@ -31,7 +38,13 @@ export function useLembretesNotifications() {
               let shouldNotify = false;
               
               if (lembrete.hora_vencimento && isVencendoHoje) {
-                 if (horaAtual >= lembrete.hora_vencimento) {
+                 const [horaVenc, minVenc] = lembrete.hora_vencimento.split(':').map(Number);
+                 const vencimentoEmMinutos = horaVenc * 60 + minVenc;
+                 
+                 const minutosRestantes = vencimentoEmMinutos - horaAtualEmMinutos;
+
+                 // Notifica se faltam 10 minutos ou menos, ou se já passou do horário
+                 if (minutosRestantes <= 10) {
                    shouldNotify = true;
                  }
               } else {
@@ -57,9 +70,9 @@ export function useLembretesNotifications() {
       }
     };
 
-    // Verifica ao carregar e a cada 5 minutos
     checkLembretes();
-    checkInterval.current = window.setInterval(checkLembretes, 300000);
+    // Reduzido para 1 minuto (60000ms) para maior precisão nos alertas
+    checkInterval.current = window.setInterval(checkLembretes, 60000);
 
     return () => {
       if (checkInterval.current) {
